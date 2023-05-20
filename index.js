@@ -81,6 +81,14 @@ async function run() {
     })
 
 
+    // create new car data
+    app.post('/create-car', async(req, res) =>{
+      const newCar = await carsCollection.insertOne(req.body);
+
+      newCar.acknowledged ? res.status(200).json({ message: "car successfully added"}) : res.status(400).json({ error: "Bad Request"});
+    })
+
+
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
