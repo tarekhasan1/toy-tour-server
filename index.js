@@ -89,6 +89,19 @@ async function run() {
     })
 
 
+    // update car data
+    app.put('/update-car/:id', async(req, res) => {
+      const objctId = new ObjectId(req.params.id);
+      const updateCar = await carsCollection.updateOne(
+        { _id: objctId},
+        { $set: {} }
+      );
+
+      updateCar.acknowledged ? res.status(200).json({ message: "product successfully updated" })
+      : res.status(400).json({ error: "Bad Request" });
+    });
+
+
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
