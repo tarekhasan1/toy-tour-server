@@ -29,6 +29,9 @@ async function run() {
 
     const carsCollection = client.db('toyTour').collection('toycars');
 
+    app.get('/', (req, res) =>{
+      res.send('toy tour server is running');
+  })
 
     // getting all data
     app.get('/cars', async(req, res) =>{
@@ -38,11 +41,12 @@ async function run() {
     })
 
 
+
+
     // getting single car toy data
-    app.get("/cars/:id", async (req, res) => {
-        // Generate a new ObjectId
-        const objectId = new ObjectId(req.params.id);
-        const singleProduct = await carsCollection.find({ _id: objectId }).toArray();
+    app.get("/single-car/:id", async (req, res) => {
+        console.log(req.params.id)
+        const singleProduct = await carsCollection.find({ _id: new ObjectId(req.params.id) }).toArray();
         console.log(singleProduct);
 
         singleProduct.length > 0
@@ -50,16 +54,31 @@ async function run() {
             : res.status(404).json({ error: "data not found" });
     });
 
+
     
     // getting data by user email
-    app.get("/cars/:email", async (req, res) => {
+    app.get("/user-cars/:email", async (req, res) => {
+        console.log(req.params.email)
         const userProducts = await carsCollection.find({ email: req.params.email }).toArray();
 
         userProducts.length > 0
             ? res.status(200).json(userProducts)
             : res.status(404).json({ error: "data not found" });
     }
-    );
+    ); 
+    
+    // category wise data collection finding
+    app.get('/categories', async(req, res) =>{
+      const sportsCar = await carsCollection.find({category: "Sports Car"}).toArray();
+
+      const classic = await carsCollection.find({category: "Classic"}).toArray();
+
+      const offRoad = await carsCollection.find({category: "Off-Road"}).toArray();
+
+      const data = [sportsCar, classic, offRoad];
+
+      data.length > 0 ? res.status(200).json(data): res.status(404).json({error: 'data not found'});
+    })
 
 
 
@@ -72,11 +91,6 @@ async function run() {
   }
 }
 run().catch(console.dir);
-
-
-app.get('/', (req, res) =>{
-    res.send('toy tour server is running');
-})
 
 app.listen(port, () =>{
     console.log(`server is running on port ${port}`);
