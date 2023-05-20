@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config()
 const app = express();
 const port = process.env.PORT || 5000;
@@ -37,9 +37,22 @@ async function run() {
         res.send(result);
     })
 
+
+    // getting single car toy data
+    app.get("/cars/:id", async (req, res) => {
+        // Generate a new ObjectId
+        const objectId = new ObjectId(req.params.id);
+        const singleProduct = await carsCollection.find({ _id: objectId }).toArray();
+        console.log(singleProduct);
+
+        singleProduct.length > 0
+            ? res.status(200).json(singleProduct)
+            : res.status(404).json({ error: "data not found" });
+    });
+
     
     // getting data by user email
-    app.get("/user-products/:email", async (req, res) => {
+    app.get("/cars/:email", async (req, res) => {
         const userProducts = await carsCollection.find({ email: req.params.email }).toArray();
 
         userProducts.length > 0
