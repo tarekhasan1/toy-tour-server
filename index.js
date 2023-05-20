@@ -29,11 +29,24 @@ async function run() {
 
     const carsCollection = client.db('toyTour').collection('toycars');
 
+
+    // getting all data
     app.get('/cars', async(req, res) =>{
         const cursor = carsCollection.find();
         const result = await cursor.toArray();
         res.send(result);
     })
+
+    
+    // getting data by user email
+    app.get("/user-products/:email", async (req, res) => {
+        const userProducts = await carsCollection.find({ email: req.params.email }).toArray();
+
+        userProducts.length > 0
+            ? res.status(200).json(userProducts)
+            : res.status(404).json({ error: "data not found" });
+    }
+    );
 
 
 
