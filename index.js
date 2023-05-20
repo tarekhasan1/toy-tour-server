@@ -91,15 +91,27 @@ async function run() {
 
     // update car data
     app.put('/update-car/:id', async(req, res) => {
-      const objctId = new ObjectId(req.params.id);
+      const objId = new ObjectId(req.params.id);
       const updateCar = await carsCollection.updateOne(
-        { _id: objctId},
+        { _id: objId},
         { $set: {} }
       );
 
       updateCar.acknowledged ? res.status(200).json({ message: "product successfully updated" })
       : res.status(400).json({ error: "Bad Request" });
     });
+
+
+
+    // delete car data
+    app.delete('/delete-car/:id', async(req, res) =>{
+      const objId = new ObjectId(req.params.id);
+      const deleteCar = await carsCollection.deleteOne({ _id: objId});
+
+      deleteCar.acknowledged
+      ? res.status(200).json({ message: "product successfully deleted" })
+      : res.status(400).json({ error: "Bad Request" });
+    })
 
 
 
