@@ -6,7 +6,11 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 
-app.use(cors());
+app.use(cors({origin: 'https://toy-tour.web.app', 
+methods: [
+  "GET", "POST", "PUT", "DELETE"
+]
+}));
 app.use(express.json());
 
 
@@ -94,9 +98,7 @@ async function run() {
       const objId = new ObjectId(req.params.id);
       const updateCar = await carsCollection.updateOne(
         { _id: objId},
-        { $set: {
-          ...req.body
-        } }
+        { $set: {...req.body}}
       );
 
       updateCar.acknowledged ? res.status(200).json({ message: "product successfully updated" })
