@@ -36,7 +36,7 @@ async function run() {
     // getting all data
     app.get('/cars', async(req, res) =>{
         const cursor = carsCollection.find();
-        const result = await cursor.toArray();
+        const result = await cursor.limit(20).toArray();
         res.send(result);
     })
 
@@ -94,7 +94,9 @@ async function run() {
       const objId = new ObjectId(req.params.id);
       const updateCar = await carsCollection.updateOne(
         { _id: objId},
-        { $set: {} }
+        { $set: {
+          ...req.body
+        } }
       );
 
       updateCar.acknowledged ? res.status(200).json({ message: "product successfully updated" })
